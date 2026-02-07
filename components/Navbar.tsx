@@ -11,7 +11,25 @@ const Navbar: React.FC = () => {
     { label: 'Tujuan', href: '/tujuan' },
     { label: 'Founder', href: '/founder' },
     { label: 'Materi', href: '/materi' },
+    { label: 'Instal App', href: '/#install' },
   ];
+
+  const handleScrollToInstall = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href === '/#install') {
+      setIsOpen(false);
+      if (location.pathname !== '/') {
+        // Redirect to home first if not on home page
+        return;
+      }
+      e.preventDefault();
+      const element = document.getElementById('install');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      setIsOpen(false);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-slate-200">
@@ -24,15 +42,26 @@ const Navbar: React.FC = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`text-sm font-semibold transition-colors duration-200 ${
-                  location.pathname === item.href ? 'text-primary' : 'text-slate-600 hover:text-primary'
-                }`}
-              >
-                {item.label}
-              </Link>
+              item.href.startsWith('/#') ? (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => handleScrollToInstall(e, item.href)}
+                  className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors duration-200 cursor-pointer"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`text-sm font-semibold transition-colors duration-200 ${
+                    location.pathname === item.href ? 'text-primary' : 'text-slate-600 hover:text-primary'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
           </div>
 
@@ -59,16 +88,27 @@ const Navbar: React.FC = () => {
         <div className="md:hidden bg-white border-b border-slate-200">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setIsOpen(false)}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  location.pathname === item.href ? 'bg-primary/10 text-primary' : 'text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                {item.label}
-              </Link>
+              item.href.startsWith('/#') ? (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => handleScrollToInstall(e, item.href)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`block px-3 py-2 rounded-md text-base font-medium ${
+                    location.pathname === item.href ? 'bg-primary/10 text-primary' : 'text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
           </div>
         </div>

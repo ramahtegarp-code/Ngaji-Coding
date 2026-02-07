@@ -21,7 +21,7 @@ const Profile: React.FC = () => {
             Platform Belajar Coding Santri No. 1
           </div>
           <h1 className="text-6xl md:text-9xl font-black text-white mb-6 leading-[0.9] tracking-tighter">
-            NGAYAH<br/><span className="text-primary">NGODING</span>
+            Ngaji<br/><span className="text-primary">Coding</span>
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 mb-12 font-medium max-w-2xl mx-auto leading-relaxed">
             Dari pesantren untuk peradaban. Kuasai teknologi masa depan dengan bimbingan terstruktur dan nilai-nilai luhur.

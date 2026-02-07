@@ -16,33 +16,55 @@ import MobilePath from './pages/Materials/MobilePath';
 
 const App: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstallBtn, setShowInstallBtn] = useState(false);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
-      e.preventDefault();
-      // Stash the event so it can be triggered later.
-      setDeferredPrompt(e);
-      // Update UI notify the user they can add to home screen
-      setShowInstallBtn(true);
-    });
+    // Detect iOS
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    setIsIOS(isIOSDevice);
 
-    window.addEventListener('appinstalled', () => {
-      setShowInstallBtn(false);
-      setDeferredPrompt(null);
-      console.log('PWA was installed');
-    });
-  }, []);
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Show manual prompt for iOS or if already loaded
+    const timer = setTimeout(() => {
+      if (!deferredPrompt && !isIOSDevice) {
+        setShowInstallPrompt(true);
+      } else if (isIOSDevice) {
+        setShowInstallPrompt(true);
+      }
+    }, 5000);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      clearTimeout(timer);
+    };
+  }, [deferredPrompt]);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setShowInstallBtn(false);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstallPrompt(false);
+        setDeferredPrompt(null);
+      }
+    } else {
+      // Manual fallback: Scroll to instructions or show alert
+      const element = document.getElementById('install');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setShowInstallPrompt(false);
+      } else {
+        alert("Untuk menginstal: Klik ikon titik tiga (⋮) di Chrome lalu pilih 'Instal Aplikasi', atau klik 'Add to Home Screen' di Safari.");
+      }
     }
-    setDeferredPrompt(null);
   };
 
   return (
@@ -65,17 +87,32 @@ const App: React.FC = () => {
           <CTASection />
         </main>
 
-        {showInstallBtn && (
-          <div className="fixed bottom-24 left-6 z-50 animate-bounce">
-            <button 
-              onClick={handleInstallClick}
-              className="bg-secondary text-white font-bold px-6 py-3 rounded-full shadow-2xl flex items-center space-x-2 hover:scale-105 transition-transform"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-              </svg>
-              <span>Instal Aplikasi</span>
-            </button>
+        {showInstallPrompt && (
+          <div className="fixed bottom-24 left-6 right-6 md:left-6 md:right-auto z-50 animate-in slide-in-from-bottom-10 duration-500">
+            <div className="bg-white p-5 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 flex flex-col space-y-3 max-w-sm mx-auto md:mx-0">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-xl text-primary font-bold">N</div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800 leading-none">Pasang Ngaji Coding</h4>
+                  <p className="text-[10px] text-slate-500 mt-1">Belajar lebih cepat & tanpa browser</p>
+                </div>
+              </div>
+              
+              <div className="flex space-x-2">
+                <button 
+                  onClick={handleInstallClick}
+                  className="flex-1 bg-primary text-white font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center space-x-2 hover:bg-primary/90 transition-all active:scale-95"
+                >
+                  <span className="text-xs">{deferredPrompt ? 'Instal Otomatis' : 'Lihat Cara Instal'}</span>
+                </button>
+                <button 
+                  onClick={() => setShowInstallPrompt(false)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-100 transition-colors"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
