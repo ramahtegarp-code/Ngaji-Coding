@@ -2,7 +2,7 @@
   "name": "Ngaji Coding - Belajar Dari Pesantren",
   "short_name": "NgajiCoding",
   "description": "Platform edukasi coding yang mengintegrasikan nilai pesantren dan teknologi.",
-  "start_url": "/index.html",
+  "start_url": ".",
   "display": "standalone",
   "theme_color": "#0ea5e9",
   "background_color": "#ffffff",
@@ -11,12 +11,13 @@
       "src": "https://picsum.photos/seed/coding/192/192",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "https://picsum.photos/seed/coding/512/512",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "orientation": "portrait",

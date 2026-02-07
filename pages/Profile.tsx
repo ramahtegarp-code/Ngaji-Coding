@@ -1,8 +1,22 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Profile: React.FC = () => {
+  const [status, setStatus] = useState({
+    https: false,
+    serviceWorker: false,
+    pwaReady: false
+  });
+
+  useEffect(() => {
+    setStatus({
+      https: window.location.protocol === 'https:',
+      serviceWorker: 'serviceWorker' in navigator,
+      pwaReady: !!(window as any).deferredPrompt || true // Simplified check
+    });
+  }, []);
+
   return (
     <div className="animate-in fade-in duration-700">
       {/* Hero Section */}
@@ -80,12 +94,46 @@ const Profile: React.FC = () => {
         </div>
       </section>
 
-      {/* INSTALL GUIDE SECTION - WAJIB ADA */}
+      {/* DIAGNOSTIC PANEL */}
+      <section className="py-12 px-4 bg-slate-50">
+        <div className="max-w-3xl mx-auto bg-white border border-slate-200 p-8 rounded-[2rem] shadow-sm">
+          <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
+            <span className="mr-2">🛠️</span> Cek Kesiapan Instalasi
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+              <div className="flex items-center">
+                <div className={`w-3 h-3 rounded-full mr-3 ${status.https ? 'bg-secondary' : 'bg-red-500'}`}></div>
+                <span className="text-sm font-medium">Koneksi Aman (HTTPS)</span>
+              </div>
+              <span className={`text-xs px-2 py-1 rounded-lg ${status.https ? 'bg-secondary/10 text-secondary' : 'bg-red-100 text-red-600'}`}>
+                {status.https ? 'Berhasil' : 'Wajib Hosting'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+              <div className="flex items-center">
+                <div className={`w-3 h-3 rounded-full mr-3 ${status.serviceWorker ? 'bg-secondary' : 'bg-red-500'}`}></div>
+                <span className="text-sm font-medium">Service Worker Aktif</span>
+              </div>
+              <span className={`text-xs px-2 py-1 rounded-lg ${status.serviceWorker ? 'bg-secondary/10 text-secondary' : 'bg-red-100 text-red-600'}`}>
+                {status.serviceWorker ? 'Aktif' : 'Error'}
+              </span>
+            </div>
+          </div>
+          {!status.https && (
+            <div className="mt-6 p-4 bg-primary/10 text-primary text-xs rounded-xl border border-primary/20 leading-relaxed">
+              <strong>Info Penting:</strong> Fitur "Instal" tidak akan pernah muncul jika Anda membuka web ini melalui preview chat atau <code>localhost</code> (HTTP biasa). Anda harus mengunggah file ini ke <strong>Vercel</strong> atau <strong>Netlify</strong> agar tombol instalasi muncul di HP.
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* INSTALL GUIDE SECTION */}
       <section id="install" className="py-24 bg-slate-100 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-extrabold text-slate-900 mb-4">Cara Instal Aplikasi Ngaji Coding</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">Nikmati pengalaman belajar yang lebih cepat dan lancar tanpa harus membuka browser setiap saat. Langsung muncul di menu HP Anda!</p>
+            <p className="text-slate-600 max-w-2xl mx-auto">Jika tombol otomatis tidak muncul, gunakan cara manual di bawah ini sesuai perangkat Anda.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -96,19 +144,15 @@ const Profile: React.FC = () => {
               <ol className="space-y-4 text-slate-600">
                 <li className="flex items-start">
                   <span className="font-bold text-primary mr-3">1.</span>
-                  <span>Buka <strong>ngajicoding.com</strong> di browser Chrome.</span>
+                  <span>Buka link website Anda (misal dari Vercel) di browser Chrome.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold text-primary mr-3">2.</span>
-                  <span>Klik tombol <strong>"Instal Aplikasi"</strong> yang muncul di layar, atau klik ikon titik tiga (⋮) di pojok kanan atas.</span>
+                  <span>Klik ikon titik tiga (⋮) di pojok kanan atas.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold text-primary mr-3">3.</span>
-                  <span>Pilih menu <strong>"Instal aplikasi"</strong> atau <strong>"Tambahkan ke Layar Utama"</strong>.</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-primary mr-3">4.</span>
-                  <span>Klik <strong>"Instal"</strong>. Selesai! Aplikasi kini ada di daftar aplikasi HP Anda.</span>
+                  <span>Pilih menu <strong>"Instal aplikasi"</strong>.</span>
                 </li>
               </ol>
             </div>
@@ -120,21 +164,49 @@ const Profile: React.FC = () => {
               <ol className="space-y-4 text-slate-600">
                 <li className="flex items-start">
                   <span className="font-bold text-primary mr-3">1.</span>
-                  <span>Buka <strong>ngajicoding.com</strong> menggunakan browser Safari.</span>
+                  <span>Buka link website Anda menggunakan browser Safari.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold text-primary mr-3">2.</span>
-                  <span>Klik tombol <strong>Share</strong> (ikon kotak dengan panah ke atas) di bagian bawah layar.</span>
+                  <span>Klik tombol <strong>Share</strong> (ikon kotak panah ke atas).</span>
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold text-primary mr-3">3.</span>
-                  <span>Gulir ke bawah dan pilih <strong>"Add to Home Screen"</strong> (Tambahkan ke Layar Utama).</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-primary mr-3">4.</span>
-                  <span>Klik <strong>"Add"</strong> di pojok kanan atas. Aplikasi akan muncul di menu iPhone Anda.</span>
+                  <span>Gulir ke bawah dan pilih <strong>"Add to Home Screen"</strong>.</span>
                 </li>
               </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOSTING GUIDE */}
+      <section className="py-24 px-4 bg-white">
+        <div className="max-w-4xl mx-auto bg-slate-900 rounded-[3rem] p-12 text-white relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] rounded-full"></div>
+          <div className="relative z-10">
+            <h2 className="text-3xl font-bold mb-6 flex items-center">
+              <span className="text-primary mr-3">🚀</span>
+              Alasan Kenapa Tadi Tidak Berhasil
+            </h2>
+            <p className="text-slate-400 mb-8 text-lg leading-relaxed">
+              Browser hanya mengizinkan instalasi aplikasi dari website yang sudah "Live" di internet dengan protokol <strong>HTTPS</strong>. 
+              Berikut checklist untuk Anda:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                <div className="font-bold text-primary mb-2">Hosting Wajib</div>
+                <p className="text-xs text-slate-300">Harus diunggah ke Vercel/Netlify/Hosting sendiri.</p>
+              </div>
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                <div className="font-bold text-primary mb-2">Bukan Preview</div>
+                <p className="text-xs text-slate-300">Jangan coba instal dari jendela pratinjau chat ini.</p>
+              </div>
+            </div>
+            <div className="text-center">
+               <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="inline-block bg-primary text-white font-bold px-8 py-4 rounded-xl hover:bg-primary/80 transition-all active:scale-95">
+                  Buka Vercel Sekarang
+               </a>
             </div>
           </div>
         </div>
