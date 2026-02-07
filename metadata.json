@@ -1,0 +1,10 @@
+{
+  "name": "Ngaji Coding",
+  "description": "Media belajar coding dari dasar hingga lanjut, mengintegrasikan nilai edukasi pesantren dan teknologi.",
+  "short_name": "NgajiCoding",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0ea5e9",
+  "background_color": "#ffffff",
+  "requestFramePermissions": []
+}
